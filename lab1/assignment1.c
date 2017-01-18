@@ -59,6 +59,13 @@ int main()
             }
         }
     }
+    
+    int i;
+    struct passwd *p;
+    for(i = 0; i < 5; i++){
+        p = getpwuid(i);
+        printf("entry %d: %s\n", i, p->pw_name);
+    }
 
     fclose(fp);
 
