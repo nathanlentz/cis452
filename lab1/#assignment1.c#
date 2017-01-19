@@ -2,8 +2,8 @@
 * CIS 452 W17: Lab 1 - Assignment
 * @author: Nathan Lentz
 * 01.12.17
-* Description: getInfo practices accessing
-* system calls to get information about the 
+* Description: getInfo practices accessing system
+* calls to get information about the 
 * current user. Included is user login name,
 * user ID, groupID, hostname, a user
 * specified password file, and the first 5
