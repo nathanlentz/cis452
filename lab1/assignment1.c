@@ -36,38 +36,13 @@ int main()
     printf("gid: %d\n", pwd->pw_gid);
     printf("host: %s\n", hostname);
 
-    // Open password file
-    FILE *fp;
-    fp = fopen("/etc/passwd", "r");
-    if(fp == NULL){
-        fprintf(stderr, "Cannot open /etc/passwd\n");
-    }
-    // TODO: Find a better way to do this
-    else {
-        int i = 1;
-        char line[50];
-        while(fgets(line, 50, fp) != NULL){
-            if(i < 6){
-                char dest[10] = {0};
-                int occurance = strstr(line,":") - line;
-                strncpy(dest, line, occurance);
-                printf("entry %d: %s\n", i, dest);
-                i++;
-            }
-            else{
-                break;
-            }
-        }
-    }
-    
+    // Get entries from /etc/passwd
     int i;
     struct passwd *p;
     for(i = 0; i < 5; i++){
         p = getpwuid(i);
         printf("entry %d: %s\n", i, p->pw_name);
     }
-
-    fclose(fp);
 
     char *env;
     char *foundenv;
