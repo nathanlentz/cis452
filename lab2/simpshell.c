@@ -32,13 +32,33 @@ int main(int argc, char* argv[])
 	// Enter loop for shell
 	while(1){
 
+		// Call read command and parse user input 
 		//command = read_command();
 
-	    if(command != NULL && !strcmp(command[0],"quit")){
+		// Exit if user types quit
+	    if(!strcmp(command[0],"quit") && command != NULL){
       		break;
     	}
+
+    	pid = fork();
+
+    	if(pid < 0){
+    		perror("Fork Failed");
+    		exit(1);
+    	}
+    	else if(pid == 0){ 
+    		// We are the child, do stuff
+
+    	}
+    	else if(pid > 0){
+    		// We are the parent, do stuff
+    	}
+    		
+
+    	
 	}
-cd 
+	// Return memory used for command as program exits
+	free(command);
 	return 0;
 }
 
