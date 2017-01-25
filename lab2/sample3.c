@@ -3,13 +3,15 @@
 #include <sys/types.h> 
 #include <sys/wait.h> 
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 int main() 
 { 
 
     // use these variables
 
-    pid_t pid, child; 
+    pid_t pid;
     int status;
 
     if ((pid = fork()) < 0) { 
@@ -24,8 +26,17 @@ int main()
     } 
     else { 
         /* insert an appropriate form of the wait() system call here */
-        child = wait(&status);
-        printf("Child PID %ld terminated with return status %d\n", (long) child, status); 
+        waitpid(-1, &status, 0);
+        struct rusage usage;
+        if(getrusage(RUSAGE_CHILDREN, &usage) < 0){
+            perror("Unable to get usage");
+            exit(1);
+        }
+        else{
+            printf("User CPU Time: %ld.%06ld\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_sec);
+            printf("Involuntary Context Switches: %lu\n", usage.ru_nivcsw);
+        }
+        printf("I'm done");
 
     } 
     return 0; 
