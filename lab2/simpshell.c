@@ -64,19 +64,26 @@ int main(int argc, char* argv[])
     	// waitpid -> https://linux.die.net/man/2/waitpid
     	else if(pid > 0){	
     		// Wait for child
-    		waitpid(-1, &status, 0);
-            
             struct rusage usage;
-            if(getrusage(RUSAGE_CHILDREN, &usage) < 0){
-                perror("Unable to get usage");
-                exit(1);
-            }
-            else{
+    		//waitpid(-1, &status, 0);
+            wait3(&status, 0, &usage);
+
+            printf("User CPU Time: %ld.%06ld\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_usec);
+
+            long int ics = usage.ru_nivcsw;
+            printf("Involuntary Context Switches: %ld\n", ics);
+            
+            //struct rusage usage;
+            // if(getrusage(RUSAGE_CHILDREN, &usage) < 0){
+            //     perror("Unable to get usage");
+            //     exit(1);
+            // }
+            // else{
                 //stackoverflow.com/questions/1469495/unix-programming-struct-timeval-how-to-print-it-c-programming
                 // tv_usec is the number of microseconds
-                printf("User CPU Time: %ld.%06ld\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_usec);
-                printf("Involuntary Context Switches: %lu\n", usage.ru_nivcsw);
-            }
+                //printf("User CPU Time: %ld.%06ld\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_usec);
+                //printf("Involuntary Context Switches: %lu\n", usage.ru_nivcsw);
+            // }
     	}
 	}
 	// Return memory used for command as program exits
