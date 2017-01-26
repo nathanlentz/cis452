@@ -138,5 +138,5 @@ char** read_command()
 // Display console message to user
 void display_console()
 {
-    printf("nlba > ");
+    printf("nlba type 'quit' to exit > ");
 }
