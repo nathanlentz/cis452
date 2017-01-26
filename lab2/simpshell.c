@@ -3,24 +3,27 @@
 * @authors: Nathan Lentz & Brandon Attala
 * @date: Jan 23rd, 2017
 * 
-* Simple shell 
+* Simple Shell - A simple command interpreter
+* Combines ideas of process creation, suspension,
+* execution, and termination
 **********************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <sys/time.h>
 
 /* Constants */
 #define LINELEN 256
 
 /* Prototypes */
-void display_console();
 char** read_command();
+
+/* Main */
 
 int main(int argc, char* argv[]) 
 {  
@@ -49,6 +52,9 @@ int main(int argc, char* argv[])
     	// The Child
     	else if(pid == 0){ 
     		// We are the child, run execvp
+            // https://linux.die.net/man/3/execvp
+            // Provide array of pointers that represent arguement list
+            // The array of pointers must be terminated by a NULL pointer
             if(execvp(command[0], &command[0]) < 0){
                 perror("Failed to execute");
                 exit(1);
@@ -88,7 +94,8 @@ char** read_command()
 	char** command;
 
     while(1){
-        display_console();
+        printf("nlba type 'quit' to exit > ");
+        //display_console();
 
         // Get user input
         fgets(buff, LINELEN, stdin);
@@ -102,7 +109,7 @@ char** read_command()
         // Remove \n from fgets 
         buff[buffSize-1]='\0'; 
 
-        // TODO: Check if command was longer than expected
+        // TODO: Check if command was longer than expected? 
         break;
     }
 
@@ -134,9 +141,3 @@ char** read_command()
     free(token);
     return command;
 }	
-
-// Display console message to user
-void display_console()
-{
-    printf("nlba type 'quit' to exit > ");
-}

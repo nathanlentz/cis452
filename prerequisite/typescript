@@ -1,0 +1,59 @@
+Script started on Wed 25 Jan 2017 11:13:41 PM EST
+[?1034h[eos11:~/github/cis452/prerequisite]$ ls
+a.out  sampleProb4.c  typescript
+[eos11:~/github/cis452/prerequisite]$ gcc -Wall sampleProb4.c -g
+[eos11:~/github/cis452/prerequisite]$ ./a.out
+Hello, world.
+You are the 268435456.000000 person to write this program!
+[eos11:~/github/cis452/prerequisite]$ gdb a.out
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux 7.6.1-94.el7
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/lentzna/github/cis452/prerequisite/a.out...done.
+(gdb) b main
+Breakpoint 1 at 0x400585: file sampleProb4.c, line 6.
+(gdb) r
+Starting program: /home/lentzna/github/cis452/prerequisite/a.out 
+
+Breakpoint 1, main () at sampleProb4.c:6
+6	   double num = 0.0; 
+Missing separate debuginfos, use: debuginfo-install glibc-2.17-157.el7_3.1.x86_64
+(gdb) p num
+$1 = 0
+(gdb) s
+7	   printf ("Hello, world.\n"); 
+(gdb) p num
+$2 = 0
+(gdb) s
+Hello, world.
+8	   num = pow(2, 28); 
+(gdb) p num
+$3 = 0
+(gdb) s
+9	   printf ("You are the %f person to write this program!\n", num); 
+(gdb) p num
+$4 = 268435456
+(gdb) s
+You are the 268435456.000000 person to write this program!
+10	   return 0; 
+(gdb) p num
+$5 = 268435456
+(gdb) s
+11	}(gdb) s
+0x00007ffff7a3db35 in __libc_start_main () from /lib64/libc.so.6
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 9592] will be killed.
+
+Quit anyway? (y or n) y
+[eos11:~/github/cis452/prerequisite]$ exit
+exit
+
+Script done on Wed 25 Jan 2017 11:16:22 PM EST
