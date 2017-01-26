@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 char** read_command()
 {
 	char buff[LINELEN];	
-    char* word;
+    char* token;
 
     // An array of pointers 
 	char** command;
@@ -108,7 +108,7 @@ char** read_command()
 
     // We now have a command. Allocate memory
     command = malloc(sizeof(char*));
-    word = strtok(buff," ");
+    token = strtok(buff," ");
 
     /* Create a vector of pointers to arguments for use in execvp */
 
@@ -119,11 +119,11 @@ char** read_command()
 
     while(1){
         command = realloc(command,sizeof(char*) * (i+1));
-        command[i] = malloc((strlen(word)+1) * sizeof(char));
-        strcpy(command[i], word);
+        command[i] = malloc((strlen(token)+1) * sizeof(char));
+        strcpy(command[i], token);
         i++;
         // If nex is NULL, we've reached the end
-        if((word = strtok(NULL," ")) == NULL) {
+        if((token = strtok(NULL," ")) == NULL) {
             break;
         }
       }
@@ -131,7 +131,7 @@ char** read_command()
     // execvp needs null terminate to argument list or a bad adress will be given
     command[i] = NULL;
 
-    free(word);
+    free(token);
     return command;
 }	
 
