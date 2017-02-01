@@ -26,7 +26,6 @@ void closeHandler(int signal);
 
 pid_t pid;
 
-
 /* Main Method */
 
 int main()
@@ -46,7 +45,6 @@ int main()
 
 	// Child Instructions
 	else if(pid == 0){
-		printf("Spawned child PID#: %d\n", getpid());
 
 		// Get our parent ID so we can send signals to it
 		pid_t ppid = getppid();
@@ -73,12 +71,12 @@ int main()
 	// Parent Instructions
 	else {
 		// Register signal handler with user signals and ^C
-		sleep(1);
+		printf("Spawned child#: %d\n", pid);
 		signal(SIGUSR1, signalHandler);
 		signal(SIGUSR2, signalHandler);
 		signal(SIGINT, closeHandler);
 
-		printf("Waiting . . .");
+		printf("Waiting . . .\t\t");
 		fflush(stdout);
 		
 		wait(&status);
@@ -97,20 +95,20 @@ void signalHandler(int signal)
 {
 	
 	if(signal == SIGUSR1){
-		printf("\t\t Received SIGUSR1\n");
-		printf("Waiting . . .");
+		printf("Received SIGUSR1\n");
+		printf("Waiting . . .\t\t");
 		fflush(stdout);
 	}
 
 	else if(signal == SIGUSR2){
-		printf("\t\t Received SIGUSR2\n");
-		printf("Waiting . . .");
+		printf("Received SIGUSR2\n");
+		printf("Waiting . . .\t\t");
 		fflush(stdout);
 	}
 
 	// Something went wrong
 	else {
-		printf("\t\t Uh oh! I wasn't expecting this signal, exiting.\n");
+		printf("Uh oh! I wasn't expecting this signal, exiting.\n");
 		exit(1);
 	}
 }
@@ -126,10 +124,11 @@ void signalHandler(int signal)
 
 void closeHandler(int signal){
 	if(pid > 0){
-		printf("\t\tStupid kids, I'm ending you.\n");
+		//printf("\t\tStupid kids, I'm ending you.\n");
+		fprintf(stdout," received. Stupid kids!\n");
 		// Kill child process with SIGKILL
 		//If pid is positive, then signal sig is sent to pid.
 		kill(pid, SIGKILL);
 		exit(0);
-}
 	}
+}
