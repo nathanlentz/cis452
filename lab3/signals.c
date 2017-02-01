@@ -19,7 +19,11 @@
 
 /* Prototypes */
 
-void signal_handler();
+void signalHandler(int signal);
+
+/* Global Variables */
+
+pid_t pid;
 
 
 /* Main Method */
@@ -30,8 +34,6 @@ int main()
 	
 	srand(time(NULL));
 
-	pid_t pid;
-	int rNum;
 	int status;
 
 	if((pid = fork()) < 0){
@@ -43,36 +45,36 @@ int main()
 	else if(pid == 0){
 		printf("Spawned child PID#: %d\n", getpid());
 
+		pid_t ppid = getppid();
+
 		while(1){
+			int randomNumber;
+			int randomSignal;
 			// Wait random amount of time (1-5 seconds)
-			rNum = (rand() % 5) + 1;
+			randomNumber = (rand() % 5) + 1;
+			sleep(randomNumber);
 
 			// Randomly send signal to parent
+			randomSignal = rand() % 2;
+			if(randomSignal == 0){
+				kill(ppid,SIGUSR1);
+			}
+			else{
+				kill(ppid,SIGUSR2);
+			}
 		}
-
-
-		
-		
-	
-
-		
-
-
 	}
 	// Parent Instructions
 	else{
 
 		// Register signal handler with user signals
-		signal(SIGUSR1, signal_handler);
-		signal(SIGUSR2, signal_handler);
-		printf("waiting. . .");
+		signal(SIGUSR1, signalHandler);
+		signal(SIGUSR2, signalHandler);
+		signal(SIGINT, signalHandler);
+		printf("Waiting. . .");
 		wait(&status);
 
 	}
-
-
-
-
 	return 0;
 }
 
@@ -82,14 +84,24 @@ int main()
 * SIGUSR1 / SIGUSR2
 ********************************************************/
 
-void signal_handler(int signal)
+void signalHandler(int signal)
 {
-	//TODO: Do stuff for received signal
+	
 	if(signal == SIGUSR1){
-
+		printf("\t\t Received SIGUSR1\n");
+		printf("Waiting . . .");
 	}
 
-	else if(signal == SIGNUSR2){
+	else if(signal == SIGUSR2){
+		printf("\t\t Received SIGUSR2\n");
+		printf("Waiting . . .");
+	}
 
+	else {
+		printf("\t\tStupid kids, killing the child\n");
+		kill(SIGKILL, pid);
+
+		printf("I think I am the parent: %d", getpid());
+		exit(0);
 	}
 }
