@@ -30,14 +30,16 @@ pid_t pid;
 
 int main()
 {
-
-	
+	// Initialize random number generator
 	srand(time(NULL));
 
 	int status;
 
-	if((pid = fork()) < 0){
-		perror("Failed to fork");
+	// Fork parent process
+	pid = fork();
+	// if((pid = fork()) < 0){
+	if(pid < 0){
+		perror("Failed to fork\n");
 		exit(1);
 	}	
 
@@ -45,11 +47,13 @@ int main()
 	else if(pid == 0){
 		printf("Spawned child PID#: %d\n", getpid());
 
+		// Get our parent ID so we can send signals to it
 		pid_t ppid = getppid();
+		int randomNumber;
+		int randomSignal;
 
 		while(1){
-			int randomNumber;
-			int randomSignal;
+
 			// Wait random amount of time (1-5 seconds)
 			randomNumber = (rand() % 5) + 1;
 			sleep(randomNumber);
@@ -58,6 +62,7 @@ int main()
 			randomSignal = rand() % 2;
 			if(randomSignal == 0){
 				kill(ppid,SIGUSR1);
+				
 			}
 			else{
 				kill(ppid,SIGUSR2);
@@ -65,13 +70,16 @@ int main()
 		}
 	}
 	// Parent Instructions
-	else{
-
-		// Register signal handler with user signals
+	else {
+		// Register signal handler with user signals and ^C
+		sleep(1);
 		signal(SIGUSR1, signalHandler);
 		signal(SIGUSR2, signalHandler);
 		signal(SIGINT, signalHandler);
-		printf("Waiting. . .");
+
+		printf("Waiting . . .");
+		fflush(stdout);
+		
 		wait(&status);
 
 	}
@@ -90,15 +98,19 @@ void signalHandler(int signal)
 	if(signal == SIGUSR1){
 		printf("\t\t Received SIGUSR1\n");
 		printf("Waiting . . .");
+		fflush(stdout);
 	}
 
 	else if(signal == SIGUSR2){
 		printf("\t\t Received SIGUSR2\n");
 		printf("Waiting . . .");
+		fflush(stdout);
 	}
 
+	// ^C must have been received
 	else {
-		printf("\t\tStupid kids, killing the child\n");
+		printf("\t\tStupid kids, I'm ending you.\n");
+		// Kill child process with SIGKILL
 		kill(SIGKILL, pid);
 
 		printf("I think I am the parent: %d", getpid());
