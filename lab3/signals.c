@@ -20,6 +20,7 @@
 /* Prototypes */
 
 void signalHandler(int signal);
+void closeHandler(int signal);
 
 /* Global Variables */
 
@@ -75,7 +76,7 @@ int main()
 		sleep(1);
 		signal(SIGUSR1, signalHandler);
 		signal(SIGUSR2, signalHandler);
-		signal(SIGINT, signalHandler);
+		signal(SIGINT, closeHandler);
 
 		printf("Waiting . . .");
 		fflush(stdout);
@@ -107,13 +108,28 @@ void signalHandler(int signal)
 		fflush(stdout);
 	}
 
-	// ^C must have been received
+	// Something went wrong
 	else {
-		printf("\t\tStupid kids, I'm ending you.\n");
-		// Kill child process with SIGKILL
-		kill(SIGKILL, pid);
-
-		printf("I think I am the parent: %d", getpid());
-		exit(0);
+		printf("\t\t Uh oh! I wasn't expecting this signal, exiting.\n");
+		exit(1);
 	}
 }
+
+/*********************************************************
+* Close Handler ensures to kill processes before exiting
+* the program. We ensure that a SIGINT signal is registered
+* with this handler by the parent. If the parent receives
+* this signal, we check to ensure pid is positive, and then 
+* issue a kill
+* http://www.tutorialspoint.com/unix_system_calls/kill.htm
+***********************************************************/
+
+void closeHandler(int signal){
+	if(pid > 0){
+		printf("\t\tStupid kids, I'm ending you.\n");
+		// Kill child process with SIGKILL
+		//If pid is positive, then signal sig is sent to pid.
+		kill(pid, SIGKILL);
+		exit(0);
+}
+	}
