@@ -60,10 +60,12 @@ int main()
 			// Randomly send signal to parent
 			randomSignal = rand() % 2;
 			if(randomSignal == 0){
+				// Send specified signal to the parent
 				kill(ppid,SIGUSR1);
 				
 			}
 			else{
+				// Send specified signal to the parent
 				kill(ppid,SIGUSR2);
 			}
 		}
