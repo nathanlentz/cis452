@@ -52,6 +52,11 @@ int main(int argc, char* argv[])
     // This would be simply the name of the function
     void* (*start)(void*)
 ```
-    * Pass an address that is a void pointer. In our function, take that pointer and cast it to what we need it to be
+* Pass an address that is a void pointer. In our function, take that pointer and cast it to what we need it to be
     * If we have two arguments (or more), we can put them in a struct. Then put the pointer to the struct as the argument. 
     * Then in our function, we cast the pointer to the struct we defined and get the properties we need
+
+#### Tips for final programming project
+* The equivalent for a wait with threads is 'join()'
+    * With threads, we don't haveo maintain the same parent, child relationship as fork()s
+        * We can do a detatch. To tell the parent that we are not going to return
