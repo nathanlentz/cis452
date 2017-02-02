@@ -60,3 +60,4 @@ int main(int argc, char* argv[])
 * The equivalent for a wait with threads is 'join()'
     * With threads, we don't haveo maintain the same parent, child relationship as fork()s
         * We can do a detatch. To tell the parent that we are not going to return
+* We still share global variables with threads. We can also communicate specific date to a thread (Question 7 of lab 4)
