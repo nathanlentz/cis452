@@ -16,7 +16,8 @@
 * TODO: Add description
 *************************************************************/
 
-#define FILELEN 50
+#define FILE_LEN 50
+#define MAX_REQUESTS 50
 
 /* Global Variables */
 int filesRequested;
@@ -31,11 +32,14 @@ void* worker(void* arg);
 
 int main()
 {
-	char buff[FILELEN];
-	int status;
 	// Seed random number generator
 	srand(time(NULL));
 
+	// TODO: Make this an array of char arrays
+	char buffer[FILE_LEN];
+	char* files[MAX_REQUESTS];
+	int status;
+	
 	// Register signal handler 
 	signal(SIGINT, sigHandler);
 
@@ -45,18 +49,21 @@ int main()
 	printf("Connected\n\n");
 
 	// Dispatch thread 
+	int i = 0;
 	while(1){
 		// Input string from user
 		printf("Enter name of file: ");
-		fgets(buff, FILELEN, stdin);
+		fgets(buffer, FILE_LEN, stdin);
+		files[i] = strndup(buffer, FILE_LEN);
 
 		// Spawn child thread and pass filename entered via user
 		pthread_t workThread;
- 		if ((status = pthread_create (&workThread, NULL,  worker, &buff) != 0)) { 
+ 		if ((status = pthread_create (&workThread, NULL,  worker, files[i]) != 0)) { 
 	        fprintf(stderr, "thread create error %d: %s\n", status, strerror(status)); 
 	        exit (1); 
     	}
 		// Repeat!
+		i++;
 	}
 
 }
@@ -85,16 +92,29 @@ void sigHandler(int signal)
 **************************************************************/
 void* worker(void* arg)
 {
+	filesRequested++;
 	// Dereference the filename for access	
  	char *fileRequest = (char*) arg;
-	//printf("Worker sees: %s\n", file_request);
- 	int randomNum = rand() % 100 + 1;
- 	printf("Random number: %d", randomNum);
-	// Sleep for certain amount of time
 
-	// 80% - Sleep(1)
+	int sleepTime;
+
+	// Sleep for certain amount of time
+	// 80% - Sleep(1)	
+ 	if(rand() % 10 <= 5){
+ 		sleepTime = 1;
+ 		sleep(sleepTime);;
+ 	}
+
 	// 20% - Sleep(7 - 10)
+ 	else {
+ 		sleepTime = rand() % 4 + 7;
+ 		sleep(sleepTime);
+ 	}
+
 	// Wake up, print diagonstic message that includes the name of the file
 
-	return NULL;
+	filesServed++;
+	printf("Found file : %s\t Serve time: %i\n", fileRequest, sleepTime);
+
+	return 0;
 }
