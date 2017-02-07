@@ -54,7 +54,26 @@ int main()
 		// Input string from user
 		printf("Enter name of file: ");
 		fgets(buffer, FILE_LEN, stdin);
-		files[i] = strndup(buffer, FILE_LEN);
+		int bufferSize = strlen(buffer);
+		if(bufferSize < 1){
+			printf("\nFile length must be at least 1 char long: ");
+			continue;
+		}
+
+		// remove \n from fgets
+		buffer[bufferSize-1]='\0';
+		fflush(stdout);
+
+		// Strndup returns a pointer to a new string
+		// So files is an array of pointers
+		if(i <= MAX_REQUESTS){
+			files[i] = strndup(buffer, FILE_LEN);	
+		}
+		else {
+			printf("At request limit!\n");
+			exit(0);
+		}
+		
 
 		// Spawn child thread and pass filename entered via user
 		pthread_t workThread;
@@ -65,7 +84,6 @@ int main()
 		// Repeat!
 		i++;
 	}
-
 }
 
 
@@ -79,8 +97,9 @@ void sigHandler(int signal)
 	// Do stuff
 	if(signal == SIGINT){
 		// report statistics
-		printf("Total Files Requested: %d\n", filesRequested);
-		printf("Total Files Served: %d\n", filesServed);
+		printf("\n\nReceived instructions to kill...");
+		printf("\nTotal Files Requested: %d\n", filesRequested);
+		printf("Total Files Served: %d\n\n", filesServed);
 		exit(0);
 	}
 	exit(0);
@@ -92,6 +111,8 @@ void sigHandler(int signal)
 **************************************************************/
 void* worker(void* arg)
 {
+	// TODO: Implement mutex for file access time
+
 	filesRequested++;
 	// Dereference the filename for access	
  	char *fileRequest = (char*) arg;
@@ -113,8 +134,9 @@ void* worker(void* arg)
 
 	// Wake up, print diagonstic message that includes the name of the file
 
-	filesServed++;
-	printf("Found file : %s\t Serve time: %i\n", fileRequest, sleepTime);
+	filesServed++;	
+	printf("\n\nFound file: %s\t Serve Time: %d\n", fileRequest, sleepTime);
+	fflush(stdout);
 
-	return 0;
+	return NULL;
 }
