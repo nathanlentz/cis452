@@ -37,7 +37,7 @@ int main()
 
 	// TODO: Make this an array of char arrays
 	char buffer[FILE_LEN];
-	char* files[MAX_REQUESTS];
+	//char* files[MAX_REQUESTS];
 	int status;
 	
 	// Register signal handler 
@@ -66,18 +66,18 @@ int main()
 
 		// Strndup returns a pointer to a new string
 		// So files is an array of pointers
-		if(i <= MAX_REQUESTS){
-			files[i] = strndup(buffer, FILE_LEN);	
-		}
-		else {
-			printf("At request limit!\n");
-			exit(0);
-		}
+		// if(i <= MAX_REQUESTS){
+		// 	files[i] = strndup(buffer, FILE_LEN);	
+		// }
+		// else {
+		// 	printf("At request limit!\n");
+		// 	exit(0);
+		// }
 		
 
 		// Spawn child thread and pass filename entered via user
 		pthread_t workThread;
- 		if ((status = pthread_create (&workThread, NULL,  worker, files[i]) != 0)) { 
+ 		if ((status = pthread_create (&workThread, NULL,  worker, strndup(buffer,FILE_LEN)) != 0)) { 
 	        fprintf(stderr, "thread create error %d: %s\n", status, strerror(status)); 
 	        exit (1); 
     	}
@@ -114,6 +114,7 @@ void* worker(void* arg)
 	// TODO: Implement mutex for file access time
 
 	filesRequested++;
+	
 	// Dereference the filename for access	
  	char *fileRequest = (char*) arg;
 
@@ -137,6 +138,7 @@ void* worker(void* arg)
 	filesServed++;	
 	printf("\n\nFound file: %s\t Serve Time: %d\n", fileRequest, sleepTime);
 	fflush(stdout);
+	free(fileRequest);
 
 	return NULL;
 }
