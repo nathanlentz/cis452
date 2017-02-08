@@ -22,6 +22,8 @@
 /* Global Variables */
 int filesRequested;
 int filesServed; 
+double avgTime;
+pthread_mutex_t count_mutex;
 
 /* Prototypes */
 void sigHandler(int signal);
@@ -96,10 +98,13 @@ void sigHandler(int signal)
 {
 	// Do stuff
 	if(signal == SIGINT){
+
+		avgTime = avgTime/filesServed;
 		// report statistics
 		printf("\n\nReceived instructions to kill...");
 		printf("\nTotal Files Requested: %d\n", filesRequested);
 		printf("Total Files Served: %d\n\n", filesServed);
+		printf("Avg File Access Time: %lf\n\n", avgTime);
 		exit(0);
 	}
 	exit(0);
@@ -137,6 +142,11 @@ void* worker(void* arg)
 
 	filesServed++;	
 	printf("\n\nFound file: %s\t Serve Time: %d\n", fileRequest, sleepTime);
+
+	pthread_mutex_lock(&count_mutex);
+		avgTime += sleepTime;
+	pthread_mutex_unlock(&count_mutex);
+
 	fflush(stdout);
 	free(fileRequest);
 
