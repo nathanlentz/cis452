@@ -112,19 +112,17 @@ void* worker(void* arg)
 
 	int sleepTime;
 
-	// Sleep for certain amount of time
-	// 80% - Sleep(1)	
- 	if(rand() % 10 <= 5){
- 		sleepTime = 1;
- 		sleep(sleepTime);;
- 	}
-
 	// 20% - Sleep(7 - 10)
- 	else {
- 		sleepTime = rand() % 4 + 7;
+	if((rand() % 5) == 0{
+		sleepTime = rand() % 4 + 7;
  		sleep(sleepTime);
- 	}
-
+	}
+	else {
+		//80% - Sleep(1)
+		sleepTime = 1;
+		sleep(sleepTime);
+	}
+ 	
 	// Wake up, print diagonstic message that includes the name of the file
 
 	filesServed++;	
