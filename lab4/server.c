@@ -13,11 +13,12 @@
 * @authors Nathan Lentz & Brandon Attala
 * @date February 9th, 2017
 *
-* TODO: Add description
+* A dispatcher process continuously waits for user input and 
+* then creates a thread that will 'serve' the requested file.
+* Threads wait a random amount of time before serving
 *************************************************************/
 
 #define FILE_LEN 50
-#define MAX_REQUESTS 50
 
 /* Global Variables */
 int filesRequested;
@@ -29,20 +30,17 @@ pthread_mutex_t count_mutex;
 void sigHandler(int signal);
 void* worker(void* arg);
 
-
 /* Main Function */
 
 int main()
 {
 	// Seed random number generator
 	srand(time(NULL));
-
-	// TODO: Make this an array of char arrays
+	
 	char buffer[FILE_LEN];
-	//char* files[MAX_REQUESTS];
 	int status;
 	
-	// Register signal handler 
+	// Register signal handler for interrupt (^C
 	signal(SIGINT, sigHandler);
 
 	printf("Connecting to server...");
@@ -65,20 +63,10 @@ int main()
 		// remove \n from fgets
 		buffer[bufferSize-1]='\0';
 		fflush(stdout);
-
-		// Strndup returns a pointer to a new string
-		// So files is an array of pointers
-		// if(i <= MAX_REQUESTS){
-		// 	files[i] = strndup(buffer, FILE_LEN);	
-		// }
-		// else {
-		// 	printf("At request limit!\n");
-		// 	exit(0);
-		// }
 		
-
 		// Spawn child thread and pass filename entered via user
 		pthread_t workThread;
+		// strndup creates a copy of a string in memory and returns a pointer, so we can pass that directly
  		if ((status = pthread_create (&workThread, NULL,  worker, strndup(buffer,FILE_LEN)) != 0)) { 
 	        fprintf(stderr, "thread create error %d: %s\n", status, strerror(status)); 
 	        exit (1); 
@@ -95,10 +83,9 @@ int main()
 **************************************************************/
 
 void sigHandler(int signal)
-{
-	// Do stuff
+{	
+	// If we recieved an interrupt, print statistics
 	if(signal == SIGINT){
-
 		avgTime = avgTime/filesServed;
 		// report statistics
 		printf("\n\nReceived instructions to kill...");
@@ -143,6 +130,7 @@ void* worker(void* arg)
 	filesServed++;	
 	printf("\n\nFound file: %s\t Serve Time: %d\n", fileRequest, sleepTime);
 
+	// Lock then unlock our avgTime variable so that only this thread may touch it during this time
 	pthread_mutex_lock(&count_mutex);
 		avgTime += sleepTime;
 	pthread_mutex_unlock(&count_mutex);
