@@ -6,6 +6,7 @@
 #include <sys/ipc.h> 
 #include <sys/shm.h>
 #include <sys/stat.h>
+#include <sys/sem.h>
 
 #define SIZE 16
 
@@ -25,6 +26,22 @@ int main(int argc, char* argv[])
    int shmId, semId;
    pid_t pid;
 
+   // Structures for wait and signal 
+   struct sembuf wait;
+   struct sembuf signal;
+
+   // Wait Struct
+   wait.sem_num = 0;          /* semaphore number */ 
+   wait.sem_op = -1;          /* semaphore operation */
+   wait.sem_flg = SEM_UNDO;   /* operation flags */
+
+   /* SEM_UNDO will automatically be undone when process terminates */
+
+   // Signal Struct
+   signal.sem_num = 0;
+   signal.sem_op = 1;
+   signal.sem_flg = SEM_UNDO;
+
    // Set our loop value from command line argument
    loop = atoi(argv[1]);
 
@@ -40,24 +57,26 @@ int main(int argc, char* argv[])
    shmPtr[0] = 0; 
    shmPtr[1] = 1;
 
-   // TODO: Create semaphore
-   //semget()
+   // Create semaphore 
+   // http://www.tldp.org/LDP/lpg/node51.html
+   semId = semget(IPC_PRIVATE, 1, IPC_CREAT | 0660);
+   printf("Semaphore created!\n");
 
-   // TODO: Initialize semaphore
-   //semctl()
+   // Initialize semaphore
+   semctl(semId, 0, SETVAL, 1);
 
 
    if (!(pid = fork())) { 
       for (i=0; i<loop; i++) { 
          // TODO semaphore wait
-         // semop()
+         semop(semId, &wait, 1);
 
          // swap the contents of shmPtr[0] and shmPtr[1]
          temp = shmPtr[0];
          shmPtr[0] = shmPtr[1];
          shmPtr[1] = temp;         
          // Signal semaphore signal
-         // semop()
+         semop(semId, &signal, 1);
 
       } 
       if (shmdt (shmPtr) < 0) { 
@@ -70,19 +89,21 @@ int main(int argc, char* argv[])
       for (i=0; i<loop; i++) { 
          // swap the contents of shmPtr[1] and shmPtr[0] 
          // TODO semaphore wait
-         // semop()
+         semop(semId, &wait, 1);
+
          temp = shmPtr[1];
          shmPtr[1] = shmPtr[0];
          shmPtr[0] = temp;
          // TODO semaphore signal
-         // semop()
+         semop(semId, &signal, 1);
       }
 
-   wait (&status); 
+   waitpid(pid, &status, 0); 
+
    printf ("values: %li\t%li\n", shmPtr[0], shmPtr[1]);
 
-   // TODO remove our semaphpre
-   // semctl()
+   // Remove semaphore
+   semctl(semId, 0, IPC_RMID);
 
    if (shmdt (shmPtr) < 0) { 
       perror ("just can't let go\n"); 
