@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
    // Initialize semaphore
    // SETVAL: Sets value of semval for specficied semaphore in set (we have 1)
    if(semctl(semId, 0, SETVAL, 1) == -1){
-      perror("semctl")
+      perror("semctl");
       exit(1);
    }
  
@@ -114,6 +114,8 @@ int main(int argc, char* argv[])
       perror("Removing semctl");
       exit(1);
    }
+
+   printf("Semaphore released!\n");
 
    if (shmdt (shmPtr) < 0) { 
       perror ("just can't let go\n"); 
