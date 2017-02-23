@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
    pid_t pid;
 
    // Structures for wait and signal 
+   // http://tldp.org/LDP/lpg/node52.html
    struct sembuf wait;
    struct sembuf signal;
 
@@ -59,23 +60,28 @@ int main(int argc, char* argv[])
 
    // Create semaphore 
    // http://www.tldp.org/LDP/lpg/node51.html
+   // When used with IPC_CREAT, fail is semaphore already exists
    semId = semget(IPC_PRIVATE, 1, IPC_CREAT | 0660);
    printf("Semaphore created!\n");
 
    // Initialize semaphore
-   semctl(semId, 0, SETVAL, 1);
-
-
+   // SETVAL: Sets value of semval for specficied semaphore in set (we have 1)
+   if(semctl(semId, 0, SETVAL, 1) == -1){
+      perror("semctl")
+      exit(1);
+   }
+ 
    if (!(pid = fork())) { 
       for (i=0; i<loop; i++) { 
-         // TODO semaphore wait
+         // Decrement semaphore to get in
          semop(semId, &wait, 1);
 
          // swap the contents of shmPtr[0] and shmPtr[1]
          temp = shmPtr[0];
          shmPtr[0] = shmPtr[1];
          shmPtr[1] = temp;         
-         // Signal semaphore signal
+         
+         // Signal semaphore at exit
          semop(semId, &signal, 1);
 
       } 
@@ -87,14 +93,15 @@ int main(int argc, char* argv[])
    } 
    else 
       for (i=0; i<loop; i++) { 
-         // swap the contents of shmPtr[1] and shmPtr[0] 
-         // TODO semaphore wait
+         // Decrement semaphore to get in
          semop(semId, &wait, 1);
 
+         // swap the contents of shmPtr[1] and shmPtr[0] 
          temp = shmPtr[1];
          shmPtr[1] = shmPtr[0];
          shmPtr[0] = temp;
-         // TODO semaphore signal
+         
+         // Signal semaphore at exit
          semop(semId, &signal, 1);
       }
 
@@ -103,7 +110,10 @@ int main(int argc, char* argv[])
    printf ("values: %li\t%li\n", shmPtr[0], shmPtr[1]);
 
    // Remove semaphore
-   semctl(semId, 0, IPC_RMID);
+   if(semctl(semId, 0, IPC_RMID) == -1){
+      perror("Removing semctl");
+      exit(1);
+   }
 
    if (shmdt (shmPtr) < 0) { 
       perror ("just can't let go\n"); 
