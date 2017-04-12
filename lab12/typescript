@@ -1,0 +1,16 @@
+Script started on Thu 06 Apr 2017 04:38:36 PM EDT
+[?1034h[eos12:~/github/cis452/lab12]$ ls -l
+total 20
+-rwx--x--x 1 lentzna users 8840 Apr  6 16:36 a.out
+-rw------- 1 lentzna users  418 Apr  6 16:30 sample1.c
+-rw------- 1 lentzna users  578 Apr  6 16:37 sample2.c
+-rw------- 1 lentzna users    0 Apr  6 16:38 typescript
+[eos12:~/github/cis452/lab12]$ ./a.out
+sample1.c            : size is: 418 bytes
+sample2.c            : size is: 578 bytes
+a.out                : size is: 8840 bytes
+typescript           : size is: 0 bytes
+[eos12:~/github/cis452/lab12]$ exit
+exit
+
+Script done on Thu 06 Apr 2017 04:38:49 PM EDT
