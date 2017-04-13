@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
 		else if(dFlag == 0 && files[i][0] == '.'){
 			continue;
 		}
-		
+
 		// Print inode for -i flag
 		if(iFlag == 1){
 			printf("%zu ", statBuf.st_ino);
@@ -173,6 +173,9 @@ int main(int argc, char* argv[])
 		if(lFlag == 1){
 	        printf("%c", (S_ISDIR(statBuf.st_mode))? 'd': '-'); //if dir
 	        // Formatted permissions
+	        // Octal formatting obtained from stack overflow: 
+	        // http://stackoverflow.com/questions/10323060/printing-file-permissions-like-ls-l-using-stat2-in-c
+
             printf( (statBuf.st_mode & S_IRUSR) ? "r" : "-");
 		    printf( (statBuf.st_mode & S_IWUSR) ? "w" : "-");
 		    printf( (statBuf.st_mode & S_IXUSR) ? "x" : "-");

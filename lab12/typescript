@@ -1,16 +1,65 @@
-Script started on Thu 06 Apr 2017 04:38:36 PM EDT
-[?1034h[eos12:~/github/cis452/lab12]$ ls -l
-total 20
--rwx--x--x 1 lentzna users 8840 Apr  6 16:36 a.out
--rw------- 1 lentzna users  418 Apr  6 16:30 sample1.c
--rw------- 1 lentzna users  578 Apr  6 16:37 sample2.c
--rw------- 1 lentzna users    0 Apr  6 16:38 typescript
-[eos12:~/github/cis452/lab12]$ ./a.out
-sample1.c            : size is: 418 bytes
-sample2.c            : size is: 578 bytes
-a.out                : size is: 8840 bytes
-typescript           : size is: 0 bytes
-[eos12:~/github/cis452/lab12]$ exit
+Script started on Wed 12 Apr 2017 08:45:22 PM EDT
+[?1034h[eos02:~/github/cis452/lab12]$ gcc -Wall customls.c
+[eos02:~/github/cis452/lab12]$ ls -i
+114822575 a.out       114823466 sample1.c  114822604 typescript
+114822574 customls.c  114822641 sample2.c
+[eos02:~/github/cis452/lab12]$ ./a.out -i
+114823466 sample1.c  114822641 sample2.c  114822575 a.out  114822574 customls.c  114822604 typescript  
+[eos02:~/github/cis452/lab12]$ ls -l
+total 32
+-rwx--x--x 1 lentzna users 13656 Apr 12 20:45 a.out
+-rw------- 1 lentzna users  5395 Apr 12 20:42 customls.c
+-rw------- 1 lentzna users   418 Apr  6 16:30 sample1.c
+-rw------- 1 lentzna users   578 Apr  6 16:37 sample2.c
+-rw------- 1 lentzna users     0 Apr 12 20:45 typescript
+[eos02:~/github/cis452/lab12]$ ./a.out -l
+total 32
+-rw-------  1 lentzna users    418 Apr  6 16:30 sample1.c  
+-rw-------  1 lentzna users    578 Apr  6 16:37 sample2.c  
+-rwx--x--x  1 lentzna users  13656 Apr 12 20:45 a.out  
+-rw-------  1 lentzna users   5395 Apr 12 20:42 customls.c  
+-rw-------  1 lentzna users      0 Apr 12 20:45 typescript  
+[eos02:~/github/cis452/lab12]$ ls -l -i
+total 32
+114822575 -rwx--x--x 1 lentzna users 13656 Apr 12 20:45 a.out
+114822574 -rw------- 1 lentzna users  5395 Apr 12 20:42 customls.c
+114823466 -rw------- 1 lentzna users   418 Apr  6 16:30 sample1.c
+114822641 -rw------- 1 lentzna users   578 Apr  6 16:37 sample2.c
+114822604 -rw------- 1 lentzna users     0 Apr 12 20:45 typescript
+[eos02:~/github/cis452/lab12]$ ./a.out -l -i
+total 32
+114823466 -rw-------  1 lentzna users    418 Apr  6 16:30 sample1.c  
+114822641 -rw-------  1 lentzna users    578 Apr  6 16:37 sample2.c  
+114822575 -rwx--x--x  1 lentzna users  13656 Apr 12 20:45 a.out  
+114822574 -rw-------  1 lentzna users   5395 Apr 12 20:42 customls.c  
+114822604 -rw-------  1 lentzna users      0 Apr 12 20:45 typescript  
+[eos02:~/github/cis452/lab12]$ ls -l ../../
+total 36
+drwx--x--x 10 lentzna users 4096 Jan 31 18:41 cis451
+drwxr-xr-x 14 lentzna users 4096 Apr  6 16:12 cis452
+drwx--x--x  4 lentzna users 4096 Feb 20 12:36 cis452-project2
+drwx--x--x  3 lentzna users 4096 Sep 28  2016 collabProjects
+drwxr-xr-x  5 lentzna users 4096 Jan 30 17:16 mobile-app-dev-book
+drwx--x--x  4 lentzna users 4096 Feb  3 11:21 mobile-app-development-cis357
+drwxr-xr-x  4 lentzna users 4096 Mar 23 17:01 rivals
+drwx--x--x  2 lentzna users 4096 Apr  1 12:42 test-env
+drwx--x--x  4 lentzna users 4096 Apr  4 17:50 whack-a-mole-cis452
+[eos02:~/github/cis452/lab12]$ ./a.out -l ../../
+total 36
+drwxr-xr-x 14 lentzna users   4096 Apr  6 16:12 cis452  
+drwx--x--x  4 lentzna users   4096 Feb  3 11:21 mobile-app-development-cis357  
+drwxr-xr-x  5 lentzna users   4096 Jan 30 17:16 mobile-app-dev-book  
+drwx--x--x  4 lentzna users   4096 Feb 20 12:36 cis452-project2  
+drwx--x--x  4 lentzna users   4096 Apr  4 17:50 whack-a-mole-cis452  
+drwx--x--x  3 lentzna users   4096 Sep 28 17:18 collabProjects  
+drwx--x--x  2 lentzna users   4096 Apr  1 12:42 test-env  
+drwx--x--x 10 lentzna users   4096 Jan 31 18:41 cis451  
+drwxr-xr-x  4 lentzna users   4096 Mar 23 17:01 rivals  
+[eos02:~/github/cis452/lab12]$ ls
+a.out  customls.c  sample1.c  sample2.c  typescript
+[eos02:~/github/cis452/lab12]$ ./a.out
+sample1.c  sample2.c  a.out  customls.c  typescript  
+[eos02:~/github/cis452/lab12]$ exit
 exit
 
-Script done on Thu 06 Apr 2017 04:38:49 PM EDT
+Script done on Wed 12 Apr 2017 08:46:41 PM EDT
