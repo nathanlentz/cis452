@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 
 /****************************************************
 * Lab 12 Programming Assignment - ls implementation
@@ -29,8 +30,9 @@ DIR * dirPtr;
 struct dirent * entryPtr;
 struct stat statBuf;
 
-char* dateFormatting[7];
-char* dateChar;
+char * dateChars[7];
+char * dateChar;
+char formattedDate[64];
 // Flags used for outputting
 int lFlag = 0;
 int iFlag = 0;
@@ -39,6 +41,8 @@ int totalFiles;
 
 
 /* Prototypes */
+void formatAndPrintDate(char * date);
+const char * formatPermissions(int permission);
 
 
 /* Main Entry to Program */
@@ -119,7 +123,7 @@ int main(int argc, char* argv[])
 	}
 
 	//TODO Sort all files via name
-	//qsort(files, currentDirIndex, sizeof(char*), &)
+	//qsort(files, currentDirIndex, sizeof(char*), &functionnameforsort)
 
 	// If '-l' sum blocks used by files
 	if(lFlag == 1){
@@ -159,28 +163,41 @@ int main(int argc, char* argv[])
 		else if(dFlag == 0 && files[i][0] == '.'){
 			continue;
 		}
-
-		// Print info for -l 
-		if(lFlag == 1){
-	        printf("%c", (S_ISDIR(statBuf.st_mode))? 'd': '-'); //if dir
-	        //printf("%s ", format_perms(statBuf.st_mode)); //formatted permissions
-	        printf("%zu ", statBuf.st_nlink); //num of links
-	        printf("%s ", getpwuid(statBuf.st_uid)->pw_name); //user name
-	        printf("%s ", getgrgid(statBuf.st_gid)->gr_name); //group name
-	        printf("%zu ", statBuf.st_size); //file size
-          	//printf("%s", statBuf.st_atime);
-         	// format_date(ctime(&(statBuf.st_atime))); //formatted time
-         	// printf("%s ", formatted);
-		}
-
+		
 		// Print inode for -i flag
 		if(iFlag == 1){
 			printf("%zu ", statBuf.st_ino);
 		}
 
+		// Print info for -l 
+		if(lFlag == 1){
+	        printf("%c", (S_ISDIR(statBuf.st_mode))? 'd': '-'); //if dir
+	        // Formatted permissions
+            printf( (statBuf.st_mode & S_IRUSR) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWUSR) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXUSR) ? "x" : "-");
+		    printf( (statBuf.st_mode & S_IRGRP) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWGRP) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXGRP) ? "x" : "-");
+		    printf( (statBuf.st_mode & S_IROTH) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWOTH) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXOTH) ? "x" : "-");
+			// Number of links	        
+	        printf(" %*zu ", 2, statBuf.st_nlink);
+	        // Current Username
+	        printf("%s ", getpwuid(statBuf.st_uid)->pw_name);
+	        // Group Name
+	        printf("%s ", getgrgid(statBuf.st_gid)->gr_name);
+	        // File Size
+	        printf("%6zu ", statBuf.st_size);
+         	
+         	// Print Formatted time
+         	formatAndPrintDate(ctime(&(statBuf.st_mtime))); 
+		}
+
+
 		// Print file name
 		printf("%s  ", files[i]);
-		//printf("\x1b[0m");
 
 		if (lFlag == 1){
 			printf("\n");
@@ -192,5 +209,35 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
+}
+
+/***************************************************
+* Takes a pointer to a date in statBuf. Removes
+* day of week + seconds to make date look similar
+* to the -l flag
+* ctime returns format: Mon Aug 13 08:23:14 2012
+****************************************************/
+void formatAndPrintDate(char* date)
+{
+	int i = 0;
+	int tokens = 0;
+	dateChar = strtok(date, " :");
+	dateChars[i] = dateChar;
+	tokens++;
+	i = 0;
+
+	while(dateChar != NULL){
+		i++;
+		dateChar = strtok(NULL, " :");
+		dateChars[i] = dateChar;
+		tokens++;
+	}
+
+	printf("%*s", 3, dateChars[1]);
+	printf(" %*s", 2, dateChars[2]);
+	printf(" %*s", 2, dateChars[3]);
+	printf(":%*s ",2, dateChars[4]);
+
+	return;
 }
 
