@@ -1,0 +1,21 @@
+Script started on Tue 18 Apr 2017 08:26:55 PM EDT
+[?1034h[eos11:~/github/cis452/lab13]$ gcc -Wall lncustom.c
+[eos11:~/github/cis452/lab13]$ ls
+a.out  lncustom.c  sample1.c  subDir  typescript
+[eos11:~/github/cis452/lab13]$ ./a.out subDir/junk hardLink
+[eos11:~/github/cis452/lab13]$ ./a.out subDir/junk softLink -s
+[eos11:~/github/cis452/lab13]$ ls
+a.out  hardLink  lncustom.c  sample1.c	softLink  subDir  typescript
+[eos11:~/github/cis452/lab13]$ ls -l
+total 28
+-rwx--x--x 1 lentzna users 8888 Apr 18 20:27 a.out
+-rw------- 2 lentzna users 1359 Apr 18 20:24 hardLink
+-rw------- 1 lentzna users 1359 Apr 18 20:23 lncustom.c
+-rw------- 1 lentzna users  735 Apr 13 15:29 sample1.c
+lrwxrwxrwx 1 lentzna users   11 Apr 18 20:27 softLink -> subDir/junk
+drwx--x--x 2 lentzna users 4096 Apr 18 20:24 subDir
+-rw------- 1 lentzna users    0 Apr 18 20:26 typescript
+[eos11:~/github/cis452/lab13]$ exit
+exit
+
+Script done on Tue 18 Apr 2017 08:27:43 PM EDT
